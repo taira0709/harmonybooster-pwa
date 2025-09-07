@@ -385,10 +385,13 @@ document.getElementById('hb-form').addEventListener('submit', async (e) => {
       downloadBlob(blob, 'HarmonyBooster_out.wav');
       toast('ダウンロード開始しました');
     }
+
   } catch (err) {
     console.error(err);
     toast('処理に失敗しました: ' + (err?.message || '不明なエラー'));
     document.getElementById('hb-prog')?.remove();
+  } finally {
+    document.getElementById('spinner').style.display = 'none';
   }
 });
 
