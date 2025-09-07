@@ -5,7 +5,7 @@ app = Flask(__name__, static_folder="static", template_folder="templates")
 
 # ------- Basic Auth (全ルート保護) -------
 REALM = "HarmonyBooster"
-EXEMPT_PATHS = {"/healthz"}  # 認証不要にしたいパスがあればここに追加
+EXEMPT_PATHS = {"/healthz"}  # すべて保護したいなら set() にする
 
 def _creds_ok(u, p):
     return u == os.getenv("BASIC_AUTH_USER") and p == os.getenv("BASIC_AUTH_PASS")
@@ -29,9 +29,12 @@ def healthz():
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    # 認証キャンセル時にUIが残らないよう HTML を no-store
+    resp = make_response(render_template("index.html"))
+    resp.headers["Cache-Control"] = "no-store"
+    return resp
 
-# /sw.js をサイトルートで配信（キャッシュ無効化ヘッダ付き）
+# /sw.js をサイト直下で配信（常に最新を取る）
 @app.route("/sw.js")
 def service_worker():
     resp = make_response(
@@ -40,6 +43,12 @@ def service_worker():
     resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     resp.headers["Pragma"] = "no-cache"
     resp.headers["Expires"] = "0"
+    return resp
+
+# ついでに検索避け（任意）
+@app.after_request
+def add_robots_header(resp):
+    resp.headers["X-Robots-Tag"] = "noindex, nofollow, noarchive"
     return resp
 
 if __name__ == "__main__":
