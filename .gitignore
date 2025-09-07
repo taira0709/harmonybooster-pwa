@@ -1,8 +1,16 @@
 ﻿.venv/
 venv/
 __pycache__/
+
 build/
 dist/
 *.spec
 *.log
+
+# OS
 .DS_Store
+Thumbs.db
+
+# アプリ一時ファイル
+static/tmp/
+*.wav
