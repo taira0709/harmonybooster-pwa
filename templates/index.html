@@ -7,14 +7,15 @@
 
 <link rel="icon" type="image/png" href="/static/icon.png">
 <link rel="apple-touch-icon" href="/static/icon-512.png">
-<link rel="manifest" href="/static/manifest.json">
+<link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#00BFFF">
 
 <link rel="stylesheet" href="/static/style.css">
 
 <script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/static/sw.js?v=2').catch(()=>{});
+  // 本番のみSWを登録。URLは /sw.js に統一し、?v= でバージョン更新
+  if ('serviceWorker' in navigator && !['localhost', '127.0.0.1'].includes(location.hostname)) {
+    navigator.serviceWorker.register('/sw.js?v=hb-v6').catch(()=>{});
   }
 </script>
 
@@ -302,7 +303,7 @@ function setProgress(pct){
 
 <!-- APIへPOSTしてWAVをダウンロード（進捗＋完了表示つき） -->
 <script>
-const API_BASE = 'https://YOUR_API_BASE'; // ← ここを差し替え
+const API_BASE = '/api';
 
 document.getElementById('hb-form').addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -313,11 +314,34 @@ document.getElementById('hb-form').addEventListener('submit', async (e) => {
 
   try {
     toast('サーバーで処理中…');
-    const res = await fetch(`${API_BASE}/process`, { method: 'POST', body: fd });
+    const res = await fetch(`${API_BASE}/process`, {
+      method: 'POST',
+      body: fd,
+      cache: 'no-store',
+      credentials: 'same-origin', 
+    });
+
+    const ct = res.headers.get('content-type') || '';
+
+    // エラー系（JSONで返る想定）
     if (!res.ok) {
-      const t = await res.text().catch(()=> '');
-      throw new Error(`API error ${res.status}: ${t}`);
+      let reason = '';
+      if (ct.includes('application/json')) {
+        try { const j = await res.json(); reason = j.error || ''; } catch {}
+      } else {
+        try { reason = await res.text(); } catch {}
+      }
+      throw new Error(reason || `API error ${res.status}`);
     }
+
+    // 成功系（WAVバイナリ）
+    if (ct.includes('application/json')) {
+      // 想定外：成功でJSONが来た場合
+      const j = await res.json().catch(()=> ({}));
+      toast(j.message || '処理は完了しましたが、ダウンロードデータが見つかりません');
+      return;
+    }
+
     const total = Number(res.headers.get('Content-Length') || 0);
     const reader = res.body?.getReader?.();
     let chunks = [], received = 0;
@@ -333,16 +357,16 @@ document.getElementById('hb-form').addEventListener('submit', async (e) => {
       }
       const blob = new Blob(chunks, {type: 'audio/wav'});
       setProgress(100);
-      downloadBlob(blob, 'HarmonyBooster.wav');
+      downloadBlob(blob, 'HarmonyBooster_out.wav');
       toast('ダウンロード完了！');
     } else {
       const blob = await res.blob();
-      downloadBlob(blob, 'HarmonyBooster.wav');
+      downloadBlob(blob, 'HarmonyBooster_out.wav');
       toast('ダウンロード開始しました');
     }
   } catch (err) {
     console.error(err);
-    toast('処理に失敗しました: ' + err.message);
+    toast('処理に失敗しました: ' + (err?.message || '不明なエラー'));
     document.getElementById('hb-prog')?.remove();
   }
 });
