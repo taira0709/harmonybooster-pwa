@@ -5,199 +5,59 @@
 <title>ハーモニーブースター</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link rel="icon" type="image/png" href="{{ url_for('static', filename='icon.png') }}">
-<link rel="apple-touch-icon" href="{{ url_for('static', filename='icon-512.png') }}">
-<link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+<link rel="icon" type="image/png" href="/static/icon.png">
+<link rel="apple-touch-icon" href="/static/icon-512.png">
+<link rel="manifest" href="/static/manifest.json">
 <meta name="theme-color" content="#00BFFF">
 
-  <!-- 外部CSS -->
-  <link rel="stylesheet" href="/static/style.css">
+<link rel="stylesheet" href="/static/style.css">
 
-  <!-- Service Worker 登録 -->
 <script>
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js?v=2');
+    navigator.serviceWorker.register('/static/sw.js?v=2').catch(()=>{});
   }
 </script>
 
-
-  <!-- ページ内スタイル（既存のstyleは残してOK） -->
-  <style>
-    body {
-      font-family: system-ui, sans-serif;
-      padding: 1em;
-      background: #121212;
-      color: #fff;
-    }
-    .container {
-      max-width: 800px;
-      margin: auto;
-      background: #1e1e1e;
-      padding: 2em;
-      border-radius: 16px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-    }
-    h1 { margin-bottom: 0.5em; }
-  </style>
-</head>
-
-  <style>
-    body {
-      font-family: system-ui, sans-serif;
-      padding: 1em;
-      background: #121212;
-      color: #fff;
-    }
-    .container {
-      max-width: 800px;
-      margin: auto;
-      background: #1e1e1e;
-      padding: 2em;
-      border-radius: 16px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-    }
-    h1 { margin-bottom: 0.5em; }
-
-    /* ネオン風タイトル */
-.logo-text {
-  font-size: 3.2em;   /* ここは前に調整した値 */
-  font-weight: bold;
-  text-align: left;
-  color: #00BFFF;
-  text-shadow:
-    0 0 5px #00BFFF,
-    0 0 10px #00BFFF,
-    0 0 20px #008CBA,
-    0 0 40px #008CBA;
-  letter-spacing: 0.05em;
-  margin: 0.5em 0;
-  position: relative;   /* ← 下線用に必要 */
-}
-
-.logo-text::after {
-  content: "";
-  display: block;
-  width: 100%;   /* ← タイトル文字の幅いっぱいに */
-  max-width: 12em;  /* 長すぎないように上限を指定 */
-  height: 4px;
-  margin-top: 0.3em;
-  background: linear-gradient(90deg, #00BFFF, #008CBA);
-  border-radius: 2px;
-
-  box-shadow:
-    0 0 10px #00BFFF,
-    0 0 20px #008CBA;
-}
-
-    label {
-      display: block;
-      margin-top: 1.5em;
-      color: #cccccc;
-      font-weight: 500;
-    }
-    input[type="range"],
-    input[type="number"],
-    select {
-      width: 100%;
-      padding: 0.5em;
-      border-radius: 6px;
-      border: none;
-      background: #2a2a2a;
-      color: #fff;
-      font-size: 1em;
-    }
-input[type="range"] {
-  /* 既存のスタイル */
-  accent-color: #00BFFF;
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
-  width: 100%;
-
-  /* 新規追加：背景色の設定 */
-  background: linear-gradient(to right, #00BFFF 0%, #00BFFF var(--val), #2a2a2a var(--val), #2a2a2a 100%);
-}    .range-val { font-weight: bold; margin-left: 0.5em; color: #00BFFF; }
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-
-    /* 大きなボタン（ダウンロードなど） */
-    button {
-      margin-top: 2em;
-      padding: 1em 2em;
-      background: #00BFFF;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 1em;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    button:hover {
-      background: #008CBA;
-      color: #fff;
-    }
-
-    audio { width: 100%; margin-top: 1em; }
-    select { background: #2a2a2a; color: #fff; }
-    input[type="file"] {
-      background: #2a2a2a; color: #fff; border: none; padding: 0.5em; border-radius: 6px;
-    }
-    input[type="file"]::file-selector-button {
-      background: #00BFFF;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      padding: 0.4em 0.8em;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    input[type="file"]::file-selector-button:hover {
-      background: #008CBA;
-    }
-
-    /* 行内配置（スライダー＋値＋Rボタン） */
-    .inline { display:flex; align-items:center; gap:0.3em; }
-
-    /* 小型Rボタン */
-    .reset-btn {
-      padding: 0.1em 0.4em;
-      font-size: 0.7em;
-      line-height: 1;
-      height: 1.6em;
-      background: #00BFFF;
-      color: #fff;
-      border: none;
-      border-radius: 3px;
-      cursor: pointer;
-      margin-top: 0;
-    }
-    .reset-btn:hover {
-      background: #008CBA;
-      border: none;
-      color: #fff;
-    }
-  </style>
+<style>
+  body { font-family: system-ui, sans-serif; padding: 1em; background:#121212; color:#fff; }
+  .container { max-width: 800px; margin: auto; background:#1e1e1e; padding:2em; border-radius:16px; box-shadow:0 4px 20px rgba(0,0,0,.4); }
+  h1 { margin-bottom:.5em; }
+  .logo-text{font-size:3.2em;font-weight:bold;text-align:left;color:#00BFFF;text-shadow:0 0 5px #00BFFF,0 0 10px #00BFFF,0 0 20px #008CBA,0 0 40px #008CBA;letter-spacing:.05em;margin:.5em 0;position:relative}
+  .logo-text::after{content:"";display:block;width:100%;max-width:12em;height:4px;margin-top:.3em;background:linear-gradient(90deg,#00BFFF,#008CBA);border-radius:2px;box-shadow:0 0 10px #00BFFF,0 0 20px #008CBA}
+  label{display:block;margin-top:1.5em;color:#ccc;font-weight:500}
+  input[type="range"],input[type="number"],select{width:100%;padding:.5em;border-radius:6px;border:none;background:#2a2a2a;color:#fff;font-size:1em}
+  input[type="range"]{accent-color:#00BFFF;padding:0;margin:0;box-sizing:border-box;width:100%;background:linear-gradient(to right,#00BFFF 0%,#00BFFF var(--val),#2a2a2a var(--val),#2a2a2a 100%)}
+  .range-val{font-weight:bold;margin-left:.5em;color:#00BFFF}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  button{margin-top:2em;padding:1em 2em;background:#00BFFF;color:#fff;border:none;border-radius:8px;font-size:1em;cursor:pointer;transition:.2s}
+  button:hover{background:#008CBA}
+  audio{width:100%;margin-top:1em}
+  input[type="file"]{background:#2a2a2a;color:#fff;border:none;padding:.5em;border-radius:6px}
+  input[type="file"]::file-selector-button{background:#00BFFF;color:#fff;border:none;border-radius:6px;padding:.4em .8em;cursor:pointer;transition:.2s}
+  input[type="file"]::file-selector-button:hover{background:#008CBA}
+  .inline{display:flex;align-items:center;gap:.3em}
+  .reset-btn{padding:.1em .4em;font-size:.7em;line-height:1;height:1.6em;background:#00BFFF;color:#fff;border:none;border-radius:3px;cursor:pointer;margin-top:0}
+  .reset-btn:hover{background:#008CBA;border:none;color:#fff}
+</style>
 </head>
 <body>
 <div class="container">
-  <!-- ✨ ネオンタイトル（英語表記に変更） -->
   <h1 class="logo-text">Harmony Booster</h1>
-
-  <!-- 説明文は日本語に -->
   <p>① 音声ファイルを選び、② プリセットまたはスライダーを調整し、③ 書き出しでWAVをダウンロードできます。</p>
 
-  <!-- フォーム開始 -->
-  <form method="POST" enctype="multipart/form-data">
+  <form id="hb-form" method="post" enctype="multipart/form-data" onsubmit="return false;">
     <label>① 音声ファイルをアップロード
       <input type="file" name="file" accept="audio/*" required>
     </label>
 
     <label>② プリセット選択
-      <select id="preset_id">
+      <select id="preset_id" name="preset_id">
         <option value="male">男性</option>
         <option value="female">女性</option>
         <option value="custom">カスタム</option>
       </select>
     </label>
+
     <div class="grid">
       <div>
         <label>帯域 Low (Hz)
@@ -207,7 +67,6 @@ input[type="range"] {
           <input type="number" id="band_high" name="band_high" value="6000" min="200" max="20000" step="10">
         </label>
 
-        <!-- ミッド／サイド／出力：小型Rボタン -->
         <label>ミッドゲイン
           <div class="inline">
             <input type="range" id="mid_atten_db" name="mid_atten_db" min="-80" max="6" step="0.5" value="0">
@@ -248,7 +107,7 @@ input[type="range"] {
       <audio id="audio" controls></audio>
     </label>
 
-    <button type="submit">高品質で処理してダウンロード</button>
+    <button id="download-btn" type="submit">高品質で処理してダウンロード</button>
   </form>
 </div>
 
@@ -256,7 +115,6 @@ input[type="range"] {
 ;(function() {
   const audio = document.getElementById("audio");
   const fileInput = document.querySelector("input[type='file']");
-
   const sliders = {
     band_low: document.getElementById("band_low"),
     band_high: document.getElementById("band_high"),
@@ -274,79 +132,54 @@ input[type="range"] {
   function initAudioGraph() {
     ctx = new (window.AudioContext || window.webkitAudioContext)();
     srcNode = ctx.createMediaElementSource(audio);
-
-    // ========= MS分解 =========
     const splitter = ctx.createChannelSplitter(2);
     srcNode.connect(splitter);
-
     const gLtoM = ctx.createGain(); gLtoM.gain.value = 0.5;
     const gRtoM = ctx.createGain(); gRtoM.gain.value = 0.5;
     const gLtoS = ctx.createGain(); gLtoS.gain.value = 0.5;
     const gRtoS = ctx.createGain(); gRtoS.gain.value = -0.5;
-
     splitter.connect(gLtoM, 0); splitter.connect(gRtoM, 1);
     splitter.connect(gLtoS, 0); splitter.connect(gRtoS, 1);
-
     const mSum = ctx.createGain();
     const sSum = ctx.createGain();
     gLtoM.connect(mSum); gRtoM.connect(mSum);
-    gLtoS.connect(sSum); gRtoS.connect(sSum); // ← 修正済み
-
-    // ========= Mid：減算法 =========
+    gLtoS.connect(sSum); gRtoS.connect(sSum);
     const hpBand = ctx.createBiquadFilter(); hpBand.type = "highpass"; hpBand.Q.value = 0.707;
     const lpBand = ctx.createBiquadFilter(); lpBand.type = "lowpass";  lpBand.Q.value = 0.707;
     mSum.connect(hpBand); hpBand.connect(lpBand);
-
     const bandScale = ctx.createGain();
     const bandInvert = ctx.createGain(); bandInvert.gain.value = -1;
     lpBand.connect(bandScale); bandScale.connect(bandInvert);
-
     const midBus = ctx.createGain();
     mSum.connect(midBus);
     bandInvert.connect(midBus);
-
-    // ========= Side =========
     const sGain = ctx.createGain();
     sSum.connect(sGain);
-
-    // ========= L/R 合成 =========
     const mToL = ctx.createGain();
     const mToR = ctx.createGain();
     const sToL = ctx.createGain(); sToL.gain.value = 1;
     const sToR = ctx.createGain(); sToR.gain.value = -1;
-
     midBus.connect(mToL);  midBus.connect(mToR);
     sGain.connect(sToL);   sGain.connect(sToR);
-
     const sumL = ctx.createGain();
     const sumR = ctx.createGain();
     mToL.connect(sumL); sToL.connect(sumL);
     mToR.connect(sumR); sToR.connect(sumR);
-
     const merger = ctx.createChannelMerger(2);
     sumL.connect(merger, 0, 0);
     sumR.connect(merger, 0, 1);
-
-    // ========= 出力前：保護&出力 =========
     const comp = ctx.createDynamicsCompressor();
-    comp.threshold.value = -6;
-    comp.knee.value      = 6;
-    comp.ratio.value     = 3;
-    comp.attack.value    = 0.003;
-    comp.release.value   = 0.25;
-
+    comp.threshold.value = -6; comp.knee.value = 6;
+    comp.ratio.value = 3; comp.attack.value = 0.003; comp.release.value = 0.25;
     const hpProtect = ctx.createBiquadFilter(); hpProtect.type = "highpass"; hpProtect.Q.value = 0.707;
     const lpProtect = ctx.createBiquadFilter(); lpProtect.type = "lowpass";  lpProtect.Q.value = 0.707;
-
     const outGain = ctx.createGain();
-
     merger.connect(comp);
     comp.connect(hpProtect);
     hpProtect.connect(lpProtect);
     lpProtect.connect(outGain);
     outGain.connect(ctx.destination);
 
-    // ========= UI → AudioGraph =========
     update = function() {
       const bl = parseFloat(sliders.band_low.value);
       const bh = parseFloat(sliders.band_high.value);
@@ -355,46 +188,27 @@ input[type="range"] {
       const md = parseFloat(sliders.mid_atten_db.value);
       const sd = parseFloat(sliders.side_gain_db.value);
       const od = parseFloat(sliders.output_gain_db.value);
-
-      // 周波数は setTargetAtTime で滑らかに反映
-      const hpTarget = Math.max(20, bl);
-      const lpTarget = Math.max(bh, bl + 1);
-      hpBand.frequency.setTargetAtTime(hpTarget, ctx.currentTime, 0.02);
-      lpBand.frequency.setTargetAtTime(lpTarget, ctx.currentTime, 0.02);
-
-      // Mid ゲイン
+      hpBand.frequency.setTargetAtTime(Math.max(20, bl), ctx.currentTime, 0.02);
+      lpBand.frequency.setTargetAtTime(Math.max(bh, bl+1), ctx.currentTime, 0.02);
       const gMid = dB2gain(md);
       const k = (md <= -75) ? 1.25 : (md <= -60 ? 1.15 : 1.0);
       bandScale.gain.setTargetAtTime(k * (1 - gMid), ctx.currentTime, 0.02);
-
-      // Side
       const gs = dB2gain(sd);
       sGain.gain.setTargetAtTime(gs, ctx.currentTime, 0.02);
-
-      // 定電力ノーマライズ
       const mNorm = 1 / Math.sqrt(1 + gs * gs);
       mToL.gain.setTargetAtTime(mNorm, ctx.currentTime, 0.02);
       mToR.gain.setTargetAtTime(mNorm, ctx.currentTime, 0.02);
-
-      // 保護フィルタ
       hpProtect.frequency.setTargetAtTime(pl, ctx.currentTime, 0.02);
       lpProtect.frequency.setTargetAtTime(ph, ctx.currentTime, 0.02);
-
-      // 出力ゲイン（セーフティ込み）
       const safety = 1 / Math.max(1, gs * 0.6);
       outGain.gain.setTargetAtTime(safety * dB2gain(od), ctx.currentTime, 0.02);
     };
 
-    // rAFでまとめる（震え防止）
     let rafId = null;
     function scheduleUpdate(){
       if (rafId !== null) return;
-      rafId = requestAnimationFrame(() => {
-        rafId = null;
-        if (typeof update === "function") update();
-      });
+      rafId = requestAnimationFrame(() => { rafId = null; if (typeof update === "function") update(); });
     }
-
     Object.values(sliders).forEach(el => {
       el.addEventListener("input", scheduleUpdate, {passive:true});
       el.addEventListener("change", scheduleUpdate);
@@ -405,7 +219,6 @@ input[type="range"] {
     window.applyIfReady = () => { if (nodeSetup && typeof update === "function") update(); };
   }
 
-  // ===== ファイル選択 / 再生で初期化 =====
   fileInput.addEventListener("change", (evt) => {
     const file = evt.target.files[0];
     if (file) {
@@ -431,59 +244,132 @@ input[type="range"] {
   });
 })();
 </script>
+
 <script>
-  // グローバル関数：リセットボタン用
+  // Rボタン
   window.resetSlider = function(id, value) {
     const el = document.getElementById(id);
     if (!el) return;
     el.value = value;
-
-    // 値を更新してUI反映
     el.dispatchEvent(new Event('input', { bubbles: true }));
     el.dispatchEvent(new Event('change', { bubbles: true }));
-
-    // AudioGraphの更新を即時適用
     if (window.applyIfReady) window.applyIfReady();
   };
-</script>
-<script>
-  // スライダー左側を青く塗る処理
+
+  // スライダー色塗り
   document.querySelectorAll('input[type="range"]').forEach(slider => {
     const update = () => {
       const val = (slider.value - slider.min) / (slider.max - slider.min) * 100;
       slider.style.setProperty('--val', val + '%');
     };
     slider.addEventListener('input', update);
-    update(); // 初期化
+    update();
   });
 </script>
+
+<!-- DL進捗バー＋トースト -->
+<script>
+function toast(msg){
+  let t = document.getElementById('hb-toast');
+  if(!t){
+    t = document.createElement('div'); t.id='hb-toast';
+    t.style.cssText='position:fixed;left:50%;bottom:24px;transform:translateX(-50%);'+
+      'background:#00BFFF;color:#fff;padding:10px 16px;border-radius:8px;'+
+      'box-shadow:0 6px 18px rgba(0,0,0,.35);z-index:9999;transition:.25s';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg; t.style.opacity='1';
+  setTimeout(()=> t.style.opacity='0', 2200);
+}
+function ensureProgress(){
+  let wrap = document.getElementById('hb-prog');
+  if(!wrap){
+    wrap = document.createElement('div'); wrap.id='hb-prog';
+    wrap.innerHTML = '<div style="height:6px;background:#333;border-radius:4px;overflow:hidden">'+
+                     '  <span id="hb-prog-fill" style="display:block;height:6px;width:0%;background:#00BFFF"></span>'+
+                     '</div>';
+    wrap.style.cssText='position:fixed;left:24px;right:24px;bottom:64px;z-index:9999';
+    document.body.appendChild(wrap);
+  }
+  return document.getElementById('hb-prog-fill');
+}
+function setProgress(pct){
+  const fill = ensureProgress();
+  fill.style.width = Math.max(0, Math.min(100, pct)) + '%';
+  if (pct >= 100) setTimeout(()=> document.getElementById('hb-prog')?.remove(), 800);
+}
+</script>
+
+<!-- APIへPOSTしてWAVをダウンロード（進捗＋完了表示つき） -->
+<script>
+const API_BASE = 'https://YOUR_API_BASE'; // ← ここを差し替え
+
+document.getElementById('hb-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const file = document.querySelector('input[name="file"]').files[0];
+  if (!file) { toast('音声ファイルを選択してください'); return; }
+
+  const fd = new FormData(e.target);
+
+  try {
+    toast('サーバーで処理中…');
+    const res = await fetch(`${API_BASE}/process`, { method: 'POST', body: fd });
+    if (!res.ok) {
+      const t = await res.text().catch(()=> '');
+      throw new Error(`API error ${res.status}: ${t}`);
+    }
+    const total = Number(res.headers.get('Content-Length') || 0);
+    const reader = res.body?.getReader?.();
+    let chunks = [], received = 0;
+
+    if (reader) {
+      setProgress(0);
+      while (true) {
+        const {done, value} = await reader.read();
+        if (done) break;
+        chunks.push(value);
+        received += value.length;
+        if (total > 0) setProgress(Math.floor((received/total)*100));
+      }
+      const blob = new Blob(chunks, {type: 'audio/wav'});
+      setProgress(100);
+      downloadBlob(blob, 'HarmonyBooster.wav');
+      toast('ダウンロード完了！');
+    } else {
+      const blob = await res.blob();
+      downloadBlob(blob, 'HarmonyBooster.wav');
+      toast('ダウンロード開始しました');
+    }
+  } catch (err) {
+    console.error(err);
+    toast('処理に失敗しました: ' + err.message);
+    document.getElementById('hb-prog')?.remove();
+  }
+});
+
+function downloadBlob(blob, filename){
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+}
+</script>
+
 <script>
   const presetEl = document.getElementById("preset_id");
   const bandLow = document.getElementById("band_low");
   const bandHigh = document.getElementById("band_high");
-
   function updatePreset() {
     const preset = presetEl.value;
     if (preset === "male") {
-      bandLow.value = 120;
-      bandHigh.value = 4000;
-      bandLow.disabled = true;
-      bandHigh.disabled = true;
+      bandLow.value = 120; bandHigh.value = 4000; bandLow.disabled = true; bandHigh.disabled = true;
     } else if (preset === "female") {
-      bandLow.value = 200;
-      bandHigh.value = 6000;
-      bandLow.disabled = true;
-      bandHigh.disabled = true;
-    } else {
-      bandLow.disabled = false;
-      bandHigh.disabled = false;
-    }
-    // 値が変わったので反映
+      bandLow.value = 200; bandHigh.value = 6000; bandLow.disabled = true; bandHigh.disabled = true;
+    } else { bandLow.disabled = false; bandHigh.disabled = false; }
     if (window.applyIfReady) window.applyIfReady();
   }
-
   presetEl.addEventListener("change", updatePreset);
-  // 初期化
   updatePreset();
 </script>
 
