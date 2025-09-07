@@ -1,43 +1,31 @@
-// static/sw.js
-const VERSION = "hb-v2";                 // ← 更新時はここを上げる
-const STATIC_CACHE = `static-${VERSION}`;
-const APP_SHELL = [
-  "/",                         // ルート
-  "/static/manifest.json",
-  "/static/style.css",
-  "/static/icon.png",
-  "/static/icon-512.png"
-  // 必要ならJSや画像を追加
-];
+// Service Worker (HTMLは絶対キャッシュしない・既存キャッシュは全削除)
+const VERSION = "hb-v3"; // 変更時に上げる
 
-self.addEventListener("install", (e) => {
-  e.waitUntil(caches.open(STATIC_CACHE).then((c) => c.addAll(APP_SHELL)));
+self.addEventListener("install", (event) => {
   self.skipWaiting();
 });
 
-self.addEventListener("activate", (e) => {
-  e.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.map((k) => (k !== STATIC_CACHE ? caches.delete(k) : null)))
-    )
-  );
-  self.clients.claim();
+self.addEventListener("activate", (event) => {
+  event.waitUntil((async () => {
+    // 旧バージョンのキャッシュをすべて削除
+    const keys = await caches.keys();
+    await Promise.all(keys.map((k) => caches.delete(k)));
+    await self.clients.claim();
+  })());
 });
 
-self.addEventListener("fetch", (e) => {
-  if (e.request.method !== "GET") return;
-  // まずキャッシュ、裏で最新取得（stale-while-revalidate 風）
-  e.respondWith(
-    caches.match(e.request).then((cached) => {
-      const fetchPromise = fetch(e.request)
-        .then((res) => {
-          if (res && res.status === 200 && res.type === "basic") {
-            caches.open(STATIC_CACHE).then((c) => c.put(e.request, res.clone()));
-          }
-          return res;
-        })
-        .catch(() => cached);
-      return cached || fetchPromise;
-    })
-  );
+self.addEventListener("fetch", (event) => {
+  const req = event.request;
+  if (req.method !== "GET") return;
+
+  const accept = req.headers.get("accept") || "";
+
+  // HTML/ナビゲーションは常にネットワーク（= 認証が必ず要求される）
+  if (req.mode === "navigate" || accept.includes("text/html")) {
+    event.respondWith(fetch(req, { cache: "no-store" }));
+    return;
+  }
+
+  // それ以外は素通り（必要ならここに静的資産のキャッシュ戦略を追加）
+  event.respondWith(fetch(req));
 });
